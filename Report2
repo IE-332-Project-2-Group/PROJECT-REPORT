@@ -153,6 +153,8 @@ Accountable together -- we are Purdue.''}
 \subsection{Introduction}
 insert text
 
+\newpage
+
 \subsection{Project Statement}
 insert text
 \newline \\
@@ -165,8 +167,12 @@ insert text (new paragraph template)
 \subsection{Introduction}
 insert text
 
+\newpage
+
 \subsection{Design and Development of Sub-algorithms}
 Insert text describing the design of all of our algorithms and code as well. DO NOT MENTION Testing/Correctness/Verification, Runtime Complexity and Walltime, or Complexity. These will be discussed later. YOU SHOULD MENTION ANY CHALLENGES THAT WERE FACED DURING DEVELOPMENT.
+
+\newpage
 
 \subsection{Design and Development of Main Algorithm}
 Insert text describing the design of our main algorithm and code as well. DO NOT MENTION Testing/Correctness/Verification, Runtime Complexity and Walltime, or Complexity. These will be discussed later
