@@ -78,7 +78,7 @@ Accountable together -- we are Purdue.''}
   \begin{center}
     \label{tab:table1}
     \begin{tabular}{c|ccccc|c|c}
-      Student & X & X & X & X & X & X & X\\
+      Student & Sub-Alg & Main Alg & Testing & Report & X & X & X\\
       \hline
      Talya Arpaci & 10 & 60 & 10 & 10 & 10 & 100 & 0\\
       Hershi Meher & 30 & 10 & 50 & 10 & 10 & 110 & +10\\
@@ -151,45 +151,348 @@ Accountable together -- we are Purdue.''}
 \fancyhead[L]{\textbf{Executive Summary}}
 \section{Executive Summary}
 \subsection{Introduction}
-insert text
+Image classification is the process of extracting classes of information from a multi–channel bitmap image. The raster obtained as a result of image classification can be used to create thematic maps. Depending on the nature of the analyst's interaction with the computer during the classification process, there are two types of image classification: classification with training and classification without training.\newline
 
-\newpage
+\noindent When classifying images with training, spectral signatures obtained from training samples are used. Using the image classification toolbar, you can easily create training samples corresponding to the extracted classes. It can also easily create a signature file from training samples, which will then be used by multidimensional classification tools to classify the image.\newline
+
+\noindent This project aims to demonstrate limitations of image classification technology using 5 algorithms for fooling an image classifier. Using adversarial attacks, we are manipulating input images to fool this classifier and show that even the most complex systems could be easily deceived. The results of this project could be used to reveal weak points in the existing systems and to contribute to the development of reliable image classifiers. With our project we are going to use a trained classification model.\newline
+
+
 
 \subsection{Project Statement}
-insert text
-\newline \\
-insert text (new paragraph template)
+ Our team was given a pre-trained model that is able to classify an image as either a dandelion or a grass. The project's aim is to fool the classifier to think that a dandelion is most probably a grass and that a grass is most probably a dandelion. We have to achieve this by making 5 machine learning and/or optimization  algorithms that in the end are to be put within a parent algorithm that works by a majority classifier to assign a budget, the amount of pixels to be changed that is within an image within a sub-algorithm. The sum of these budgets should not exceed 1\% of total pixels within an image. The format of the output is a list of two probabilities of an image being classified as a dandelion and a grass, which both in sum equal to a total of 1  which is a 100\% and the final status of an image which are: grass, not\_grass, dandelion, not\_dandelion, where ``not\_" prefixes mean that the image is successfully fooled.
 
-\newpage
+\subsection{Navigation of the Group's GitHub Organization}
+Link to access  \href{https://github.com/IE-332-Project-2-Group}{GitHub Organization}.
+\newline
+\newline
+
 
 \fancyhead[L]{\textbf{Algorithm Development}}
 \section{Algorithm  Development}
 \subsection{Introduction}
-insert text
+The first step in creating an algorithm that we have taken is understanding the project outcomes. We tried to clearly define what our algorithms should do. This important step has helped us to not only create the right algorithms, but also make sure that they have reached their maximized optimal efficiency.\newline
 
-\newpage
+\noindent Once we have got an understanding of the task, we have started developing a plan. The plan included all stages of solving the project, as well as determining how we would evaluate the effectiveness of the sub-algorithms as well as the parent algorithm.\newline
+
+\noindent Furthermore, the amount of time it takes to execute the algorithm is important for the efficiency of the algorithms. For this project we have determined the time required to execute the algorithm should not exceed 10 seconds.\newline
+
+\noindent Once there was a developed a plan and defined the time, we started researching different existing machine learning and optimization articles to find the best suitable ones for this project. Our group has decided to give each person an algorithm to work on. Nevertheless, some members of our team wanted to work on more than one algorithm. Those could be found within \newline
+
+\noindent Having developed all of the algorithm our team started working on the budget assignment algorithm \%describe algorithm\% and parent algorithm where all 5 sub-algorithms are combined with an assigned budget to alternately manipulate an image.\newline
+
+\noindent While coding for our algorithms we have faced many challenges but the biggest one that easily stands out among the rest was how to write algorithms that would modify an image without using any image modification function  within r as such function require an image of class im; however, all of the images that run using the model are of class python.builtin.object.
 
 \subsection{Design and Development of Sub-algorithms}
 Insert text describing the design of all of our algorithms and code as well. DO NOT MENTION Testing/Correctness/Verification, Runtime Complexity and Walltime, or Complexity. These will be discussed later. YOU SHOULD MENTION ANY CHALLENGES THAT WERE FACED DURING DEVELOPMENT.
 
-\newpage
+\% Talya: I think we should get rid of either intro or this pre-paragraph and describe challenges for each algorithm separately
+
+\subsubsection{Sub-algorithm 1 : RGB Attack}
+This algorithm performs image modification by picking random pixels within the image and changing their colors. This is achieved by generating random pixel indices and color changing functions are then applied to it through a loop that runs for each of the selected pixels to generate a unique random color through color channels r, g, b. The amount of selected random pixels is identified by the given budget.\newline
+\noindent 
+\newline
+\noindent R code for RGB Attack Sub-Algorithm:\begin{lstlisting}[language=R, frame=single]
+##ALGORITHM 1 Talya___________________________________________________________
+  # Generate random pixel indices
+  pixel_indices_1 <- sample(pixel_num, budget_alg1, replace = FALSE)
+  
+  # Change the color of random pixels
+  for (j in pixel_indices_1) {
+    row_index <- ceiling(j / 224)
+    col_index <- j %% 224
+    if (col_index == 0){ col_index <- 224}
+    
+    # Generate new color values
+    r <- runif(1, 0, 1)
+    g <- runif(1, 0, 1)
+    b <- runif(1, 0, 1)
+    
+    # Change the color of the pixel
+    test_array[1, row_index, col_index, ] <- c(r, g, b)
+\end{lstlisting}
+\subsubsection{Sub-algorithm 2: Pixle algorithm}
+
+
+This algorithm was based on Pixle algorithm although it has been modified for the outlines of this project.
+The Pixle algorithm is a method of adaptive pixel sampling for image processing tasks, presented in the article "Pixel Permutation is a powerful "black box" attack for RGB and infrared deep learning models" (Pomponi et al., 2023).\newline
+
+\noindent The algorithm consists of several iterations. At each iteration, the algorithm randomly selects a set of image pixels and uses them to calculate the error functional. Then the algorithm adaptively updates the pixel weights and repeats the process of sampling and calculating the error in the next iteration.\newline
+
+\noindent The algorithm also contains a parameters that allows you to control the selection of pixels: "budget\_alg", which determines the number of pixels selected at each iteration.\newline
+%%
+
+\noindent First, it selects random pixel indeces from "test\_array" and stores them in the variable "pixel\_indices\_2". The number of selected indexes is determined by the variable "budget\_alg2", and the selected indexes will not be repeated.The algorithm then randomly rearranges the selected pixels into "test\_array". \newline 
+
+\noindent To do this, the program uses the "sample" function, which takes the selected pixels from "test\_array" by their indexes and shuffles them using another array, which is created from "test\_array" without the selected pixels. The number of elements to be selected from the second array is also determined by the variable "budget\_alg2". As a result, after the execution of the program, the "test\_array" array will contain the same pixels as before the execution of the program, but they will be arranged in random order, while the selected pixel indexes may change.\newline
+
+\noindent R code for Pixle Sub-Algorithm:
+\begin{lstlisting}[language=R, frame=single]
+ ##Random Pixel Swap Algorithm: Nicholas and Andrew____________________________
+  #Generate random pixel indices
+  pixel_indices_2 <- sample(pixel_num, budget_algPIXEL, replace = FALSE)
+  
+  #Swap Random Pixels
+  test_array[pixel_indices_2] <- sample(test_array[setdiff(seq_along(test_array), pixel_indices_2)], budget_algPIXEL)
+  
+\end{lstlisting}
+\subsubsection{Sub-algorithm 3: Adversarial Patch}
+
+Our third algorithm is built upon the neural network's "fooling" technique, referred to as an Adversarial patch. This approach functions by incorporating a path, sticker, or image into an existing visual, rather than modifying it entirely (Zuppichini, 2018). In our implementation, we introduce a "noise" image that comprises randomly colored pixels. This image is highly transparent, with only one percent opacity, and is iteratively superimposed on top of all grass and dandelion images prior to their evaluation through the classifier.\newline
+
+\noindent To provide further insight into the workings of our algorithm, the process begins by utilizing a 99 percent transparent PNG file named "NOISE.png." This file is then resized to match the dimensions of the grass or dandelion image being analyzed. Subsequently, the image is overlaid on top of the target image in a loop with an assigned budget allocated to modify only a small percentage of the original image's pixels before classification. Remarkably, this sub-algorithm of our parent algorithm appears to consistently outwit the classification process when it comes to identifying dandelion images. \newline
+%%
+\noindent R code for Adversarial Patch Sub-Algorithm :
+\begin{lstlisting}[language=R, frame=single]
+##FUNCTION 3
+apply_algorithm2 <- function(img_path) {
+  img <- readPNG("NOISE.png")
+  img <- img[,,1:3]
+  img[] <- runif(prod(dim(img)))
+  alpha <- array(0.99, dim(img)[1:2]) 
+  alpha_flat <- as.vector(alpha)
+  alpha_flat[1:budget_algAP] <- 1
+  img_with_alpha <- abind(array(img_path[1:budget_algAP], dim=c(sqrt(budget_algAP), sqrt(budget_algAP), 3)), array(alpha_flat[1:budget_algAP], dim=c(sqrt(budget_algAP), sqrt(budget_algAP))), along = 3)
+  img <- rasterGrob(img, interpolate=TRUE)
+  return(img)
+}
+
+##Adversarial Patch Algorithm: Mo_____________________________________________
+  #Calls Function 3 to Apply Algorithm
+  img_mod <- apply_algorithm2(test_array)
+  \end{lstlisting}
+\subsubsection{Sub-algorithm 4: RGB Channel Smoothing}
+The purpose of this algorithm is to smooth randomly selected parts of a given image. This is achieved by adding noise to the pixel. Since the noise is dependent upon the surrounding pixels, these are taken to consideration in the function.
+\newline
+A breakdown of grass and dandelion images showed that the green and blue channels carry a heavier weight from image to image. Though this is not true for every image, it is true for most. The sub-algorithm takes advantage of this shared aspect and reserves more of it’s allotted budget to alter pixels in the green and blue channels more than that in the red channel. This achieves the goal of fooling a maximum amount of images.
+\newline 
+\newline
+\noindent R code for RGB Channel Smoothing Sub-Algorithm:
+\begin{lstlisting}[language=R, frame=single]
+##RGB Channel Smoothing Algorithm: Andrew_____________________________________
+  #Generate random pixel indices
+  pixel_indices_4 <- sample(pixel_num, budget_algSMOOTH, replace = FALSE)
+  
+  #Add random noise to the pixel values and their RGB channels
+  for (j in pixel_indices_4) {
+    row_index <- ceiling(j / 224)
+    col_index <- j %% 224
+    if (col_index == 0){ col_index <- 224}
+    
+    #Alter red channel the least, these images do not have many values in the red channel
+    r_chan <- runif(1, -0.01, 0.01) 
+    test_array[1, row_index, col_index, 1] <- test_array[1, row_index, col_index, 1] + r_chan
+    
+    #Alter green channel is a heavier component of these images
+    g_chan <- runif(1, -0.8, 0.8) 
+    test_array[1, row_index, col_index, 2] <- test_array[1, row_index, col_index, 2] + g_chan
+    
+    #Alter blue channel as it is a heavier component of these images
+    b_chan <- runif(1, -0.8, 0.8) 
+    test_array[1, row_index, col_index, 3] <- test_array[1, row_index, col_index, 3] + b_chan
+  }
+
+\end{lstlisting}
+\subsubsection{Sub-algorithm 5/ CCP attack}
+R code for Sub-Algorithm 5:
+\begin{lstlisting}[language=R, frame=single]
+ #FUNCTION 1
+change_brightness <- function(img, alpha, beta) {
+  new_image <- img
+  for (k in pixel_indices_5) {
+    row_index <- ceiling(k / 224)
+    col_index <- k %% 224
+    if (col_index == 0){ col_index <- 224}
+    new_image[, row_index, col_index ,] <- pmax(pmin(alpha*new_image[, row_index, col_index ,] + beta, 255), 0)
+  } 
+  return(new_image)
+}
+
+##FUNCTION 2
+ccp_attack <- function(x, trans) {
+  img <- x
+  for (channel in seq_len(dim(x)[3])) {
+    for (j in pixel_indices_5) {
+      row_index <- ceiling(j / 224)
+      col_index <- j %% 224
+      if (col_index == 0){ col_index <- 224}
+      r <- img[,row_index,col_index,1]
+      g <- img[,row_index,col_index,2]
+      b <- img[,row_index,col_index,3]
+      temp <- r * trans[1, channel] + g * trans[2, channel] + b * trans[3, channel]
+      img[, row_index, col_index , channel] <- temp/3
+      img1 = change_brightness(img, 1, 30)
+    }
+    return(img1)
+  }
+}
+ 
+   ##CCP Attack Algorithm: Hershi________________________________________________
+  #Generate random pixel indices
+  pixel_indices_5 <-sample(pixel_num, budget_algCCP, replace = FALSE)
+  a <- runif(3, 0, 1)
+  b <- runif(3, 0, 1)
+  c <- runif(3, 0, 1)
+  trans <- array(c(a, b, c), dim = c(3, 3))
+  
+  
+  test_array <- ccp_attack(test_array, trans)
+
+  \end{lstlisting}\newpage
 
 \subsection{Design and Development of Main Algorithm}
-Insert text describing the design of our main algorithm and code as well. DO NOT MENTION Testing/Correctness/Verification, Runtime Complexity and Walltime, or Complexity. These will be discussed later
-YOU SHOULD MENTION ANY CHALLENGES THAT WERE FACED DURING DEVELOPMENT.
+\subsubsection{The Main Classifier}
+\newline
+We altered the given algorithm such that it can load the dandelion model, read the images in both folders, and print out its prediction for each of the images along with the confidence. The altered code can be seen below
+R code for the Classifier Algorithm:
+\begin{lstlisting}[language=R, frame=single]
+library(tidyverse)
+library(keras)
+library(tensorflow)
+library(reticulate)
+
+setwd("/Users/mohamedabuelreish")
+
+model_list <- load_model_tf("./dandelion_model")
+model <- model_list
+
+target_size <- c(224, 224)
+res <- data.frame(file = character(), class = character(), percent_dandelion = numeric(), percent_grass = numeric(), stringsAsFactors = FALSE)
+
+f <- list.files("./grass")
+for (i in f){
+  test_image <- image_load(paste("./grass/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- array_reshape(x, c(1, dim(x)))
+  x <- x/255
+  pred <- model %>% predict(x)
+  if (pred[1,2] < 0.50){
+    res <- rbind(res, data.frame(file = i, class = "not_grass", percent_dandelion = pred[1,1], percent_grass = 1- pred[1,1]))
+  } else {
+    res <- rbind(res, data.frame(file = i, class = "grass", percent_dandelion = pred[1,1], percent_grass = 1 - pred[1,1]))
+  }
+}
+
+f <- list.files("./dandelions")
+for (i in f){
+  test_image <- image_load(paste("./dandelions/",i,sep=""),
+                           target_size = target_size)
+  x <- image_to_array(test_image)
+  x <- array_reshape(x, c(1, dim(x)))
+  x <- x/255
+  pred <- model %>% predict(x)
+  if (pred[1,1] < 0.50){
+    res <- rbind(res, data.frame(file = i, class = "not_dandelion", percent_dandelion = pred[1,1], percent_grass = 1 - pred[1,1]))
+  } else {
+    res <- rbind(res, data.frame(file = i, class = "dandelion", percent_dandelion = pred[1,1], percent_grass = 1 - pred[1,1]))
+  }
+}
+
+print(res)
+
+\end{lstlisting}
+\newline 
+The above code initializes the language model and sets a predetermined size for the images to be analyzed. Subsequently, the image resizing process is performed, and the standard prediction model is executed. The "res" variable is then adapted to present the algorithm's predictions for a particular image, including the percentage confidence associated with each class. Specifically, for images contained within the "grass" directory, the algorithm determines the presence or absence of grass within the image. Similarly, for images located in the "dandelion" directory, the algorithm predicts whether or not the image contains dandelions.
+
+\subsubsection{Deciding the Weights of each Sub Algorithm}
+Deciding the weights of all sub-algorithms is important to improving the ability of algorithm to trick the classifier model.
+To decide the weights of each of the five sub-algorithms a looping structure was designed. This loop’s purpose is to gather the average amount of images each sub-algorithm can fool the model with. 
+\newline
+\newline
+R code for the looping structure:
+\begin{lstlisting}[language=R, frame=single]
+count_grass <- 0
+count_dandelion <- 0
+for(i in 1:100){
+
+#SUB-ALGORITHM GOES HERE
+
+count_iteration_grass <- sum(res$class == "not_grass")
+count_grass <- count_grass + count_iteration_grass
+
+count_iteration_dandelion <- sum(res$class == "not_dandelion")
+count_dandelion <- count_dandelion + count_iteration_dandelion
+
+}
+count_grass<- count_grass/100
+count_dandelion<- count_dandelion/100
+print(count_grass)
+print(count_dandelion)
+\end{lstlisting}
+This loop runs a given sub-algorithm 100 times, collecting data on the amount of grass and dandelion images fooled on each iteration. An average is then produced for grass and dandelion images fooled for the given sub-algorithm. The weights are computed like so:
+\begin{center}
+$W_n=i_n/(\sum_{i=1}^{n} i)$
+\end{center}
+Where $W_n$ is the weight of the algorithm $n$ and $i_n$ is the amount of images from the provided test set an algorithm $n$ successfully fooled.
+\newline
+\newline
+This method of determining weights enables sub-algorithms that perform well on their own receive a “fair share” of the 1\% pixel change budget allotted for images that are being changed. In the case of the CCP Attack Sub-Algorithm, which was capable of fooling the dandelion classifier with a budget of only 3 pixels, a large weight was awarded. This sub-algorithm offered significantly more performance than the others, perhaps by the nature if it’s design implementing two newly written functions. 
+Insert text describing the design of our main algorithm and code as well. 
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+Algorithm Name & Grass Images Fooled & Dandelion Images Fooled & Weight Awarded \\
+\hline
+RGB Attack & 0.00 & 9.17 & 9.719\%\\
+\hline
+Pixle & 0.00 & 1.00 & 1.059\% \\
+\hline
+Adversarial Patch & 0.00 & 38.00 & 40.257\% \\
+\hline
+RGB Channel Smoothing & 0.00 & 8.18 & 8.669\% \\
+\hline
+CCP Attack & 0.00 & 38.00 & 40.257\% \\
+\hline
+\end{tabular}
+\caption{Algorithm Weight Table}
+\label{tab:example}
+\end{table}
+
+After the application of these weights, the outputs we received saw an increased confidence from the classifier. The teams main algorithm was convincing the classifier that images of dandelions had a confidence rate in the $10^-20$ range that they were dandelions. This observation convinced the group to reduce the overall budget of 1\% to an amount much smaller. The overall 1\% budget was multiplied by 0.009 and consequentially the weights. This lowered the level of confidence, but within the realm that all dandelion images could still be convinced. In simplest terms, the main algorithm operating with 1\% budget was excessive for the needs of fooling the classifier.
+%DO NOT MENTION Testing/Correctness/Verification, run time Complexity and Wall-time, or Complexity. These will be discussed later
+%YOU SHOULD MENTION ANY CHALLENGES THAT WERE FACED DURING DEVELOPMENT.
 \newpage
 
 \fancyhead[L]{\textbf{Conclusion}}
 \section{Conclusion}
 
-Insert Here
+In conclusion, the combined effort of all 5 algorithms produces successful deception of all dandelion images. However, it was unable to fool any grass image. All algorithms except one only 
 
 \newpage
 \fancyhead[L]{\textbf{Appendix}}
 \section{Appendix}
 \subsection{Testing/Correctness/Verification}
+\subsubsection{Introduction}
+Proving the correctness of an algorithm is a very important process in software development. Firstly, it helps to find and correct errors in the algorithm that can lead to unpredictable results in the program. Secondly, the mathematical proof gives confidence to users and other developers in the correctness of the algorithm. This is especially important when working with critical systems, where incorrect execution of the algorithm can lead to serious consequences. In addition, the process of proving the correctness of the algorithm improves problem solving and abstract thinking skills, which can help in the development of more efficient algorithms in the future.\newline
 
-INSERT HERE
+\subsubsection{Loop correctness analysis}
+\noindent In this section we are going to prove correctness of code snippets for every loop in this code.\newline
+
+\noindent 
+
+\begin{lstlisting}[language=R, frame=single]
+#Functions Created for Sub-Algorithms
+change_brightness <- function(img, alpha, beta) {
+  new_image <- img
+  for (k in pixel_indices_5) {
+    row_index <- ceiling(k / 224)
+    col_index <- k %% 224
+    if (col_index == 0){ col_index <- 224}
+    new_image[, row_index, col_index ,] <- pmax(pmin(alpha*new_image[, row_index, col_index ,] + beta, 255), 0)
+  } 
+  return(new_image)
+}
+\end{lstlisting}
+ For the function above which belongs to sub-algorithm 4, CCP attack, each time the loop iterates, new\_image includes a duplicate of the original image matrix img with the brightness of the pixels identified by pixel\_indices\_5 altered in accordance with the alpha and beta values at the time. The brightness of the pixel at row index ceiling(k/224) and column index k\%\% 224 (or 224 if k is a multiple of 224) is specifically scaled by alpha and shifted by beta for each k in pixel\_indices\_5, and the resulting value is clamped to the range of 0 to 255.\newline
+
+\noindent Because the function makes a copy of the original image matrix at the beginning of the function and because the loop only changes the brightness of the pixels provided in pixel\_indices\_5, it can be firmly stated that this loop invariant initializes correctly. The adjusted pixel values are clamped to the legal range of 0 to 255 due to the pmax and pmin functions. Furthermore, since alpha and beta are not changed during the loop, their values remain unchanged throughout all of the loop iterations. With each loop iteration, the loop invariant is preserved, and at the end of the loop, when k reaches pixel\_indices\_5, new\_image includes an updated image matrix with the brightness of the specified pixels adjusted by the provided scaling and shifting factors, making the loop invariant true upon loop termination.\newline
+\newline
+\noindent
+
+
 
 \newpage
 \subsection{Runtime Complexity and Walltime}
@@ -206,10 +509,13 @@ INSERT HERE
 \fancyhead[L]{\textbf{References}}
 \section{References}
 \begin{enumerate}
-    \item citation here
+    \item Pomponi, J., Dantoni, D., Alessandro, N., & Scardapane, S. (2023). Rearranging Pixels is a Powerful Black-Box Attack for RGB and Infrared Deep Learning Models. IEEE Access, 11, 11298–11306. \url{https://doi.org/10.1109/access.2023.3241360}
+
+    \item Zuppichini, Francesco. “Let's Fool a Neural Network!” Medium, Towards Data Science, 14 Mar. 2018,   \url{https://towardsdatascience.com/lets-fool-a-neural-network-b1cded8c4c07}
 ‌
 ‌
 
 \end{enumerate}
 
 \end{document}
+
