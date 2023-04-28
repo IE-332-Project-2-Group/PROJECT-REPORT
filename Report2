@@ -1,6 +1,5 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
-
 %  USE PACKAGES  ---------------------- 
 \usepackage[margin=0.7in,vmargin=1in]{geometry}
 \usepackage{amsmath,amsthm,amsfonts}
@@ -80,10 +79,10 @@ Accountable together -- we are Purdue.''}
     \begin{tabular}{c|ccccc|c|c}
       Student & Sub-Alg & Main Alg & Testing & Report & X & X & X\\
       \hline
-     Talya Arpaci & 10 & 60 & 10 & 10 & 10 & 100 & 0\\
-      Hershi Meher & 30 & 10 & 50 & 10 & 10 & 110 & +10\\
-      Mohamed Abuelreish & 30 & 10 & 10 & 10 & 10 & 70 & -30\\
-      Andrew Newquist & 10 & 10 & 10 & 60 & 60 & 150 & +50\\
+     Talya Arpaci & 20 & 20 & 10 & 10 & 10 & 100 & 0\\
+      Hershi Meher & 20 & 10 & 50 & 10 & 10 & 110 & +10\\
+      Mohamed Abuelreish & 20 & 20 & 10 & 20 & 10 & 70 & -30\\
+      Andrew Newquist & 30 & 30 & 10 & 20 & 60 & 150 & +50\\
       Nicholas Alfano & 10 & 10 & 20 & 10 & 10 & 60 & -40\\
       \hline
       St Dev & 11.73 & 13.69 & 7.31 & 6.12 & 4.69 & 9.30 & 9.30\\
@@ -160,14 +159,13 @@ Image classification is the process of extracting classes of information from a 
 
 
 \subsection{Project Statement}
- Our team was given a pre-trained model that is able to classify an image as either a dandelion or a grass. The project's aim is to fool the classifier to think that a dandelion is most probably a grass and that a grass is most probably a dandelion. We have to achieve this by making 5 machine learning and/or optimization  algorithms that in the end are to be put within a parent algorithm that works by a majority classifier to assign a budget, the amount of pixels to be changed that is within an image within a sub-algorithm. The sum of these budgets should not exceed 1\% of total pixels within an image. The format of the output is a list of two probabilities of an image being classified as a dandelion and a grass, which both in sum equal to a total of 1  which is a 100\% and the final status of an image which are: grass, not\_grass, dandelion, not\_dandelion, where ``not\_" prefixes mean that the image is successfully fooled.
+ Our team was given a pre-trained model that is able to classify an image as either a dandelion or a grass. The project's aim is to fool the classifier to think that a dandelion is most probably a grass and that a grass is most probably a dandelion. We have to achieve this by making 5 machine learning and/or optimization  algorithms that in the end are to be put within a parent algorithm that works by a majority classifier to assign a budget, the amount of pixels to be changed  within an image within a sub-algorithm. The sum of these budgets should not exceed 1\% of total pixels within an image. The format of the output is a list of two probabilities of an image being classified as a dandelion and a grass, the sum of which equate to a total of 1  which is a 100\% and the final status of an image which are: grass, not\_grass, dandelion, not\_dandelion, where ``not\_" prefixes mean that the image has been successfully fooled.
 
 \subsection{Navigation of the Group's GitHub Organization}
 Link to access  \href{https://github.com/IE-332-Project-2-Group}{GitHub Organization}.
 \newline
 \newline
-
-
+The group established an organization in GitHub named "IE-332-Project-2-Group". This organization consists of 16 Repositories, 10 of which are relevant to Project 2 (The others for Assignment 2). Those 10 Repositories follow the naming scheme of PROJECT-XXXXXX. The XXXXXX is the content contained within the repository. It must be noted that more than 5 sub-algorithms were in development for this project in the case of one failing. The number associated with said sub-algorithms are not accurate to the number in the report. The name of said sub-algorithms is however accurate. When navigating the GitHub, these names should be used to find the respective repository of what was included in the main algorithm.
 \fancyhead[L]{\textbf{Algorithm Development}}
 \section{Algorithm  Development}
 \subsection{Introduction}
@@ -184,7 +182,7 @@ The first step in creating an algorithm that we have taken is understanding the 
 \noindent While coding for our algorithms we have faced many challenges but the biggest one that easily stands out among the rest was how to write algorithms that would modify an image without using any image modification function  within r as such function require an image of class im; however, all of the images that run using the model are of class python.builtin.object.
 
 \subsection{Design and Development of Sub-algorithms}
-Insert text describing the design of all of our algorithms and code as well. DO NOT MENTION Testing/Correctness/Verification, Runtime Complexity and Walltime, or Complexity. These will be discussed later. YOU SHOULD MENTION ANY CHALLENGES THAT WERE FACED DURING DEVELOPMENT.
+A total of 7 Sub-Algorithms were developed for this project. The group decided to take up more work if any members finished an algorithm before the others. This provided the group with flexibility if one or more algorithms were unable to be completed due to the nature of their complexity or any sort of conflict. The following sections detail the sub-algorithms that were implemented into the main algorithm. The code associated with each section is as the sub-algorithm appears in the main. Each sub-algorithm has an associated repository on GitHub with additional code that allows it to run and feed images into the classifier. 
 
 \% Talya: I think we should get rid of either intro or this pre-paragraph and describe challenges for each algorithm separately
 
@@ -293,7 +291,8 @@ A breakdown of grass and dandelion images showed that the green and blue channel
   }
 
 \end{lstlisting}
-\subsubsection{Sub-algorithm 5/ CCP attack}
+\newpage
+\subsubsection{Sub-algorithm 5: CCP attack}
 R code for Sub-Algorithm 5:
 \begin{lstlisting}[language=R, frame=single]
  #FUNCTION 1
@@ -341,9 +340,113 @@ ccp_attack <- function(x, trans) {
   \end{lstlisting}\newpage
 
 \subsection{Design and Development of Main Algorithm}
+The code provided below does not include the individual sub-algorithms as those are to be referenced in sections 2.2.1-5. The placement of these sub-algorithms and their associated functions are marked by a double-hash "\#\#" comment followed by a note.
+
+R code for the Main Algorithm:
+\begin{lstlisting}[language=R, frame=single]
+#MAIN ALGORITHM CONSISTING OF 5 SUB-ALGORITHMS
+#Each Sub-Algorithm Was Assigned a Weight Determined by 
+#Its Amount of Convinced Images from the Test Set
+
+#REQUIRED LIBRARIES
+library(tidyverse)
+library(keras)
+library(tensorflow)
+library(reticulate)
+library(jpeg)
+library(png)
+library(abind)
+library(grid)
+
+setwd("~/Desktop/Project")
+model_list <- load_model_tf("./dandelion_model/")
+model <- model_list
+
+##FUNCTIONS FOR SUB-ALGORITHMS IN SECTIONS 2.2.1-5 ARE PLACED HERE
+
+#Set target image size
+target_size <- c(224, 224)
+
+#Create Data Frame
+res <- data.frame(file = character(), class = character(), percent_dandelion = numeric(), percent_dandelions = numeric(), stringsAsFactors = FALSE)
+
+#Begin Grass Files##############################################################
+
+f <- list.files("./grass")
+for (i in f) {
+  
+  #Load image as Keras tensor object
+  test_image <- image_load(paste("./grass/", i, sep = ""), target_size = target_size)
+  
+  #Convert Keras tensor object to  array
+  test_array <- image_to_array(test_image)
+  
+  #Assign Budgets
+  test_array <- array_reshape(test_array, c(1, dim(test_array)))
+  test_array <- test_array / 255
+  pixel_num <- 224 * 224
+  budget <- round(pixel_num * 0.01 * 0.009)
+  
+  budget_algPIXEL<- budget*(0.01059) #Weight Decided for Pixel Swap Algorithm 
+  budget_algSMOOTH<- budget*(0.08669) #Weight Decided for Channel Smoothing Algorithm 
+  budget_algRGB<- budget*(0.09719) #Weight Decided for RGB attack Algorithm 
+  budget_algAP<- budget*(0.40257)  #Weight Decided for Adversarial Patch Algorithm 
+  budget_algCCP<- budget*(0.40257) #Weight Decided for CCP attack Algorithm
+
+  ##ALGORITHMS ARE PLACED HERE IN THE ORDER THAT THEY APPEAR IN SECTIONS 2.1.1-5
+
+  pred <- model %>% predict(test_array)
+  
+  #Record results in Res
+  if (pred[1,2] < 0.50){
+    res <- rbind(res, data.frame(file = i, class = "not_grass", percent_dandelion = pred[1,1], percent_grass = 1- pred[1,1]))
+  } else {
+    res <- rbind(res, data.frame(file = i, class = "grass", percent_dandelion = pred[1,1], percent_grass = 1 - pred[1,1]))
+  }
+}
+
+#Begin Dandelion Files##########################################################
+
+f <- list.files("./dandelions")
+for (i in f) {
+  
+  #Load image as Keras tensor object
+  test_image <- image_load(paste("./dandelions/", i, sep = ""), target_size = target_size)
+  
+  #Convert Keras tensor object to  array
+  test_array <- image_to_array(test_image)
+  
+  #Assign Budgets
+  test_array <- array_reshape(test_array, c(1, dim(test_array)))
+  test_array <- test_array / 255
+  pixel_num <- 224 * 224
+  budget <- round(pixel_num * 0.01 * 0.009)
+  
+  budget_algPIXEL<- budget*(0.01059) #Weight Decided for Pixel Swap Algorithm 
+  budget_algSMOOTH<- budget*(0.08669) #Weight Decided for Channel Smoothing Algorithm 
+  budget_algRGB<- budget*(0.09719) #Weight Decided for RGB attack Algorithm 
+  budget_algAP<- budget*(0.40257)  #Weight Decided for Adversarial Patch Algorithm 
+  budget_algCCP<- budget*(0.40257) #Weight Decided for CCP attack Algorithm
+
+ ##ALGORITHMS ARE PLACED HERE IN THE ORDER THAT THEY APPEAR IN SECTIONS 2.1.1-5
+
+ pred <- model %>% predict(test_array)
+  
+  #Record results in Res
+  if (pred[1,1] < 0.50){
+    res <- rbind(res, data.frame(file = i, class = "not_dandelion", percent_dandelion = pred[1,1], percent_grass = 1- pred[1,1]))
+  } else {
+    res <- rbind(res, data.frame(file = i, class = "dandelion", percent_dandelion = pred[1,1], percent_grass = 1 - pred[1,1]))
+  }
+}
+
+print(res)
+View(res)  \end{lstlisting}
+\subsubsection{How to Use the Main Algorithm}
+The zipped submission folder includes two folders labeled "grass" and "dandelions". They currently contain exclusively the images provided to the group. The main algorithm will then be loaded into R-Studio and a proper working directory shall be set to the submission folder. Running the main algorithm at this point will classify all images contained in both folders with output displayed in the R-Studio Console. If the user desires to use different images, they shall be placed in the respective folders. 
 \subsubsection{The Main Classifier}
+A large component of the Main Algorithm is comprised of the looping structure of the classifier model. This looping structure ensures that all images in the grass and dandelion folders can be classified at once.  Altering the code in this manner allowed the group to analyze output at a higher rate and re-scale input as desired. The output for all images in the grass folder will read "grass" or "not\_grass", the dandelions folder: "dandelion" or "not\_dandelion". Additionally, the percent confidence of grass and dandelion will also be printed for each input.
 \newline
-We altered the given algorithm such that it can load the dandelion model, read the images in both folders, and print out its prediction for each of the images along with the confidence. The altered code can be seen below
 R code for the Classifier Algorithm:
 \begin{lstlisting}[language=R, frame=single]
 library(tidyverse)
@@ -451,7 +554,7 @@ CCP Attack & 0.00 & 38.00 & 40.257\% \\
 \label{tab:example}
 \end{table}
 
-After the application of these weights, the outputs we received saw an increased confidence from the classifier. The teams main algorithm was convincing the classifier that images of dandelions had a confidence rate in the $10^-20$ range that they were dandelions. This observation convinced the group to reduce the overall budget of 1\% to an amount much smaller. The overall 1\% budget was multiplied by 0.009 and consequentially the weights. This lowered the level of confidence, but within the realm that all dandelion images could still be convinced. In simplest terms, the main algorithm operating with 1\% budget was excessive for the needs of fooling the classifier.
+Note: A further modification that affected the weights is discussed in section 4.3 Performance.
 %DO NOT MENTION Testing/Correctness/Verification, run time Complexity and Wall-time, or Complexity. These will be discussed later
 %YOU SHOULD MENTION ANY CHALLENGES THAT WERE FACED DURING DEVELOPMENT.
 \newpage
@@ -469,9 +572,9 @@ In conclusion, the combined effort of all 5 algorithms produces successful decep
 Proving the correctness of an algorithm is a very important process in software development. Firstly, it helps to find and correct errors in the algorithm that can lead to unpredictable results in the program. Secondly, the mathematical proof gives confidence to users and other developers in the correctness of the algorithm. This is especially important when working with critical systems, where incorrect execution of the algorithm can lead to serious consequences. In addition, the process of proving the correctness of the algorithm improves problem solving and abstract thinking skills, which can help in the development of more efficient algorithms in the future.\newline
 
 \subsubsection{Loop correctness analysis}
-\noindent In this section we are going to prove correctness of code snippets for every loop in this code.\newline
+\noindent In this section we are going to prove correctness of code snippets for every loop in this code. The correctness evaluation are going to be performed by the appearing order in the main code.\newline
 
-\noindent 
+\noindent \textbf{Change Brightness function}
 
 \begin{lstlisting}[language=R, frame=single]
 #Functions Created for Sub-Algorithms
@@ -489,21 +592,152 @@ change_brightness <- function(img, alpha, beta) {
  For the function above which belongs to sub-algorithm 4, CCP attack, each time the loop iterates, new\_image includes a duplicate of the original image matrix img with the brightness of the pixels identified by pixel\_indices\_5 altered in accordance with the alpha and beta values at the time. The brightness of the pixel at row index ceiling(k/224) and column index k\%\% 224 (or 224 if k is a multiple of 224) is specifically scaled by alpha and shifted by beta for each k in pixel\_indices\_5, and the resulting value is clamped to the range of 0 to 255.\newline
 
 \noindent Because the function makes a copy of the original image matrix at the beginning of the function and because the loop only changes the brightness of the pixels provided in pixel\_indices\_5, it can be firmly stated that this loop invariant initializes correctly. The adjusted pixel values are clamped to the legal range of 0 to 255 due to the pmax and pmin functions. Furthermore, since alpha and beta are not changed during the loop, their values remain unchanged throughout all of the loop iterations. With each loop iteration, the loop invariant is preserved, and at the end of the loop, when k reaches pixel\_indices\_5, new\_image includes an updated image matrix with the brightness of the specified pixels adjusted by the provided scaling and shifting factors, making the loop invariant true upon loop termination.\newline
-\newline
-\noindent
+\newpage
+\noindent \textbf{CCP Attack Function}
+\begin{lstlisting}[language=R, frame=single]
+ccp_attack <- function(x, trans) {
+  img <- x
+  for (channel in seq_len(dim(x)[3])) {
+    for (j in pixel_indices_5) {
+      row_index <- ceiling(j / 224)
+      col_index <- j %% 224
+      if (col_index == 0){ col_index <- 224}
+      r <- img[,row_index,col_index,1]
+      g <- img[,row_index,col_index,2]
+      b <- img[,row_index,col_index,3]
+      temp <- r * trans[1, channel] + g * trans[2, channel] + b * trans[3, channel]
+      img[, row_index, col_index , channel] <- temp/3
+      img1 = change_brightness(img, 1, 30)
+    }
+        
+    return(img1)
+  }
+}
+\end{lstlisting}
 
+\noindent For ccp\_attack function in section 2.2.5 there is no evident mathematical property that holds true across each iteration of the nested loop since pixel\_indices\_5 is a vector of random indices. However, there are a few pertinent facts that we can point out that might be useful in determining whether the loop is correct:\newline
 
+\noindent 1. In pixel\_indices\_5, each pixel is changed precisely once per channel.\newline
+\noindent 2. All pixels and channels use the same transformation matrix, trans.\newline
+\noindent 3. The sequence in which the pixels are updated has no effect on the calculations carried out inside the loop.\newline
+\noindent 4.These details allow us to pinpoint the potential loop invariant that follows:\newline
+
+\noindent The output image img begins each iteration of the nested loop with the same pixel values as the input image x for any pixels that have not yet been processed updated for the channel at hand.\newline
+
+\noindent As long as the calculations inside the loop are accurate and do not change any pixels outside of pixel\_indices\_5, this loop invariant ought to be true throughout each iteration of the nested loop.\newline
+\subsubsection{Proving correctness of image load and predictions}
+
+To be able to test any algorithm created throughout this project we would be able to tell the results of classification with assigned probabilities.  To achieve that we have added
+\begin{lstlisting}[language=R, frame=single]
+    if ( pred [1 ,2] < 0.50) {
+res <- rbind ( res , data . frame ( file = i , class = " not _ grass " ) )
+} else {
+res <- rbind ( res , data . frame ( file = i , class = " grass " ) )
+}
+\end{lstlisting}
+instead of lines
+\begin{lstlisting}[language=R, frame=single]
+    if(pred[1,2]<0.50){
+ print(i)
+\end{lstlisting}
+\newpage
+Thus, we have received this output (Note, the tables below have rounded the number to  3 digits. The actual output is rounded to 9 digits):
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+image # & Class & Percent Dandelion & Percent Grass\\
+\hline
+1 & grass & 0.040 & 0.960\\
+\hline
+2 & grass & 0.002& 0.997\\
+\hline
+3& grass& 0.002&0.998\\
+\hline
+4& grass & 0.014&0.985\\
+\hline
+5 & grass & 0.003 &0.997\\
+\hline
+\end{tabular}
+\caption{Original model output for grass.
+First 5 outputs}
+\label{tab:example}
+\end{table}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+image # & Class & Percent Dandelion & Percent Grass\\
+\hline
+51 & dandelion & 0.713 & 0.287\\
+\hline
+52 & dandelion & 0.949 & 0.051\\
+\hline
+53& dandelion& 0.513 & 0.487\\
+\hline
+54& dandelion & 0.860 & 0.140\\
+\hline
+55 & dandelion & 0.956 & 0.044\\
+\hline
+\end{tabular}
+\caption{Original model output for dandelion.
+First 5 outputs}
+\label{tab:example}
+\end{table}
+
+Although, we cannot test the model itself, the given output let's us arrive to the conclusion that image loading, transforming image to array, reshaping image array as well as model prediction works correctly and as expected.
+
+\subsubsection{Further Testing}
+A compilation of dandelion and grass images were selected from google to further verify the main algorithm's ability to fool the classifier. These images are different than the provided images. They are held in folders named "grass\_test\_online" and "dandelions\_test\_online" which are included in the submission zip folder for Project 2. Each Sub-Algorithm was tested with these images in a similar manner to how the weightswere determined in section 2.3.2. The results reaffirmed that these Sub-Algorithms can fool the classifier.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Algorithm Name & Grass Images Fooled & Dandelion Images Fooled(out of 50)\\
+\hline
+RGB Attack & 0.00 & 18.50\\
+\hline
+Pixle & 0.00 & 13.00\\
+\hline
+Adversarial Patch & 0.00 & 50.00\\
+\hline
+RGB Channel Smoothing & 0.00 & 20.00\\
+\hline
+CCP Attack & 0.00 & 50.00\\
+\hline
+\end{tabular}
+\caption{Algorithm Further Testing Results Table}
+\label{tab:example}
+\end{table}
 
 \newpage
 \subsection{Runtime Complexity and Walltime}
+\subsubsection{Introduction}
+Time complexity is defined as the amount of time taken by an algorithm to run, as a function of the length of the input. It measures the time taken to execute each statement of code in an algorithm. Wall-time on the other hand, is simply the time it takes for the program to run. Unlike wall-time, time complexity does not examine the total execution time of an algorithm, but instead provides useful information about the change in an algorithm’s execution time as the number of operations changes. Analyzing the time complexity of an algorithm can thus define the effectiveness of an algorithm, especially since there are several different ways of solving a problem. Being mindful of the time complexity of our algorithm makes us efficient programmers.\newline
+\subsubsection{Runtime Complexity Analysis}
 
-INSERT HERE
 
 \newpage
 \subsection{Performance}
+After the application of these weights, the outputs we received saw an increased confidence from the classifier. The teams main algorithm was convincing the classifier that images of dandelions had a confidence rate in the $10e-20$ range of magnitude that they were dandelions. This observation convinced the group to reduce the overall budget of 1\% to an amount much smaller. The overall 1\% budget was multiplied by 0.009 and consequentially the weights. This lowered the level of confidence, but within the realm that all dandelion images could still convinced. In simplest terms, the main algorithm operating with 1\% budget was excessive for the needs of fooling the classifier.
+\newline
+\newline
+\indent Since the alteration made here reduces the amount of pixels that are to be changed, the performance score $\sum_{b=1}^{0.01*P} f*(P/b)$ of the main algorithm increases. This trade off was made as the algorithm consistently fools the same amount of images with a fraction of the allowed budget as seen in figure 1.
+\newline
 
-INSERT HERE
-
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{Performance.jpg}
+    \caption{Performance with 1\% Budget}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{Performance2.jpg}
+    \caption{Performance with 0.009 Multiplier}
+  \end{minipage}
+\end{figure}
+\noindent Note: the columns from left to right in these figures are Image Number, Dandelion Classification, Percent Dandelion, and Percent Grass.
 \newpage
 
 \fancyhead[L]{\textbf{References}}
@@ -518,4 +752,3 @@ INSERT HERE
 \end{enumerate}
 
 \end{document}
-
